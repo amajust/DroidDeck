@@ -498,6 +498,7 @@ class SessionService : Service() {
 
         Log.i(TAG, GpuClockPin.start(this))
         Log.i(TAG, GameThreadHints.start(this))
+        Log.i(TAG, ThermalGuard.start(this) { applyThermalCap() })
 
         val size = SessionState.outputSize
         val guest = ArrayList<String>()
@@ -1350,6 +1351,14 @@ class SessionService : Service() {
         return false
     }
 
+    /** The guard can change while the activity is paused or in PiP, so the service paces the compositor too. */
+    private fun applyThermalCap() {
+        val compositor = com.droiddeck.launcher.wayland.CompositorHost
+        if (!compositor.isStarted || SessionState.refreshHz < 1f) return
+        val fps = ThermalGuard.capFps.takeIf { it > 0 } ?: SessionState.baseFpsLimit
+        compositor.updatePacing(SessionState.refreshHz, fps)
+    }
+
     private fun resumeSession(panelVisible: Boolean = true) {
         if (SessionState.suspended) SessionState.resumeRequested = true
         if (panelVisible) activityVisible = true
@@ -1820,6 +1829,7 @@ class SessionService : Service() {
         SessionState.stopRequested = false
         GpuClockPin.stop(this)
         GameThreadHints.stop()
+        ThermalGuard.stop()
         suspendOperationPending = false
         freezePending = false
         launchWatcher?.stopWatching()

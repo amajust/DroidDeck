@@ -104,6 +104,8 @@ object SessionState {
 
     @Volatile
     var refreshHz: Float = 60f
+    /** The session's own compositor frame limit, before [ThermalGuard] overrides it. */
+    @Volatile var baseFpsLimit: Int = -1
 
     @Volatile
     var upscaleRatio: Float = 0f
