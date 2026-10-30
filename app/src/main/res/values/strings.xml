@@ -598,6 +598,9 @@
     <string name="perf_gsrealtime">gamescope: realtime GPU queue</string>
     <string name="perf_gsrealtime_hint">Prioritizes the compositor\'s GPU work. Can smooth frame pacing at some cost to games.</string>
     <string name="perf_gpu">GPU</string>
+    <string name="perf_heat">Heat</string>
+    <string name="perf_thermal_guard">Cool the session when it runs hot</string>
+    <string name="perf_thermal_guard_hint">When Android reports little thermal headroom, the session is held to a lower frame rate that divides the screen\'s refresh rate evenly. The cap lifts after a minute of cooling. Needs Android 10.</string>
     <string name="perf_memory">Memory</string>
     <string name="perf_cap_off">Off</string>
     <string name="perf_cap_auto">Driver default</string>

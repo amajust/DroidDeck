@@ -601,6 +601,13 @@ object SessionPrefs {
         prefs(context).edit().putBoolean("gpuClockPin", on).apply()
     }
 
+    /** Whether a session lowers its frame rate when Android reports little thermal headroom (ThermalGuard). */
+    fun thermalGuard(context: Context): Boolean = prefs(context).getBoolean("thermalGuard", true)
+
+    fun setThermalGuard(context: Context, on: Boolean) {
+        prefs(context).edit().putBoolean("thermalGuard", on).apply()
+    }
+
     /** Whether the game's busiest threads are named to the power HAL for a boost (GameThreadHints). */
     fun gameThreadHints(context: Context): Boolean = prefs(context).getBoolean("gameThreadHints", true)
 

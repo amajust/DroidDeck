@@ -93,6 +93,7 @@ import com.droiddeck.launcher.session.LoadingState
 import com.droiddeck.launcher.hud.FusionHudConfig
 import com.droiddeck.launcher.hud.FusionHudHost
 import com.droiddeck.launcher.session.PerfMode
+import com.droiddeck.launcher.session.ThermalGuard
 import com.droiddeck.launcher.session.SteamRepair
 import com.droiddeck.launcher.session.GameEnvironmentStore
 import com.droiddeck.launcher.session.GameProfileFollowState
@@ -2193,7 +2194,8 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
     private fun mirrorRefreshLimit(): Int =
         GlassesRendering.mirrorRefreshLimit(glassesSettings, glasses, glassesScreen != null)
 
-    private fun outputFpsLimit(): Int = SessionPrefs.compositorFpsLimit(mirrorRefreshLimit())
+    private fun outputFpsLimit(): Int =
+        ThermalGuard.capFps.takeIf { it > 0 } ?: SessionPrefs.compositorFpsLimit(mirrorRefreshLimit())
 
     private fun applyOutputPacing() {
         Log.i(TAG, "perf: " + PerfMode.apply(this, outputFpsLimit(), mirrorRefreshLimit()))
@@ -3870,6 +3872,9 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
         refreshControls()
         if (::pip.isInitialized) pip.resumed()
         if (CompositorHost.isStarted) applyFrameGen()
+        Log.i(TAG, ThermalGuard.start(this) {
+            runOnUiThread { if (!isFinishing && !isDestroyed) applyOutputPacing() }
+        })
         SessionPrefs.sessionPrefs(this).registerOnSharedPreferenceChangeListener(cardboardPrefListener)
     }
 
@@ -3897,6 +3902,8 @@ class SessionActivity : ComponentActivity(), SurfaceHolder.Callback {
         resumed = false
         updatePointerCapture()
         updatePadMotion()
+        ThermalGuard.stop()
+        applyOutputPacing()
         keyboard?.takeIf { it.shown }?.hide()
         SessionPrefs.sessionPrefs(this).unregisterOnSharedPreferenceChangeListener(cardboardPrefListener)
         updateHeadTracker()

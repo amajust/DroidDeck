@@ -46,6 +46,7 @@ fun PerformancePage(
     fsyncFirst: Boolean,
     gamescopeRealtime: Boolean,
     gpuClockPin: Boolean,
+    thermalGuard: Boolean,
     ramCapMb: Int,
     zramClient: Boolean,
     vramCapMb: Int,
@@ -67,6 +68,7 @@ fun PerformancePage(
     onFsyncFirst: (Boolean) -> Unit,
     onGamescopeRealtime: (Boolean) -> Unit,
     onGpuClockPin: (Boolean) -> Unit,
+    onThermalGuard: (Boolean) -> Unit,
     onRamCapMb: (Int) -> Unit,
     onZramClient: (Boolean) -> Unit,
     onVramCapMb: (Int) -> Unit,
@@ -131,6 +133,13 @@ fun PerformancePage(
                 host, "gpuclock", stringResource(R.string.perf_gpuclock),
                 stringResource(R.string.perf_gpuclock_hint),
                 gpuClockPin, onChange = onGpuClockPin,
+            )
+        }
+        SettingsGroup(stringResource(R.string.perf_heat)) {
+            ToggleRow(
+                host, "thermalguard", stringResource(R.string.perf_thermal_guard),
+                stringResource(R.string.perf_thermal_guard_hint),
+                thermalGuard, onChange = onThermalGuard,
             )
         }
         SettingsGroup(stringResource(R.string.perf_memory)) {

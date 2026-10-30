@@ -93,7 +93,8 @@ object GameThreadHints {
                     val paced = frames.size > PACE_WINDOW_S && holdsPace(fps, SessionState.refreshHz.toDouble())
                     pacedFor = if (paced) pacedFor + 1 else 0
                     // Not SEVERE: the Odin 3 reports it once its skin reaches 50 C, a couple of minutes into any game.
-                    val spare = pm.isPowerSaveMode || pm.currentThermalStatus >= PowerManager.THERMAL_STATUS_CRITICAL
+                    val spare = pm.isPowerSaveMode || pm.currentThermalStatus >= PowerManager.THERMAL_STATUS_CRITICAL ||
+                        ThermalGuard.capFps > 0
                     val next = when {
                         spare || pacedFor >= PACE_LEAVE_S -> emptySet()
                         paced -> pick(boosted, busy.filterKeys { it in boosted })
